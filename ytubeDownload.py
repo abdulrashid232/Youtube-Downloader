@@ -50,13 +50,14 @@ class YoutubeDownloader:
             self.root.event_generate("<<DownloadFailed>>", when="tail")
 
     def select_stream_to_download(self, streams: Stream):
-        # You can customize the selection of stream based on your preferences here
-        # For example, you can choose a specific resolution, file format, etc.
-        return streams.first()
+        #customize the selection of stream based on your preferences here
+        # Let's say you want to download the highest resolution available
+        highest_resolution_stream = streams.get_highest_resolution()
+        return highest_resolution_stream
 
     def save_to_history(self, url):
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        with self.db_lock:  # Acquire the lock to ensure exclusive access to the database
+        with self.db_lock:  
             self.cursor.execute("INSERT INTO download_history (url, timestamp) VALUES (?, ?)", (url, timestamp))
             self.conn.commit()
 
